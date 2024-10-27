@@ -1,0 +1,139 @@
+---
+import Sidebar from "../components/Sidebar.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  keywords?: string;
+}
+
+const { title, description, keywords } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Astro description" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <meta
+      name="description"
+      content={description ?? "Tutoriales de ciberseguridad y devops"}
+    />
+    <meta name="keywords" content={keywords ?? "Ciberseguridad, devops"} />
+
+    <title>{title}</title>
+  </head>
+  <body>
+    <Sidebar />
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --accent: 136, 58, 234;
+    --accent-light: 224, 204, 250;
+    --accent-dark: 49, 10, 101;
+    --background: #17181c;
+    --foreground: #c1c3c8;
+    --heading: white;
+    --aqua:#05ffe2;
+    --green:#00FF00;
+    --yellow:#FFDC00;
+    --red:#FF4136;
+  }
+  html {
+    font-family: system-ui, sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+  }
+  body{
+	display: flex;
+	justify-content: center;
+  }
+  code {
+    font-family:
+      Menlo,
+      Monaco,
+      Lucida Console,
+      Liberation Mono,
+      DejaVu Sans Mono,
+      Bitstream Vera Sans Mono,
+      Courier New,
+      monospace;
+  }
+  h1 {
+    font-size: 1.5em;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    margin-bottom: 1em;
+    color: var(--heading);
+  }
+  h2 {
+    font-size: 1.1em;
+	font-weight: bold;
+    margin-top: 24px;
+    margin-bottom: 8px;
+    color: var(--heading);
+  }
+  p {
+    font-size: 1em;
+    margin-bottom: 16px;
+    line-height: 1.6;
+    color: var(--foreground);
+  }
+  .section {
+    display: flex;
+    justify-content: center;
+  }
+  .container {
+    max-width: 800px;
+    width: 100%;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+  }
+
+  pre {
+    background-color: #1e293b;
+    color: #ffffff;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 0.95em;
+    overflow-x: auto;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  ul {
+    padding-left: 20px;
+    margin-bottom: 16px;
+  }
+
+  li {
+    margin-bottom: 8px;
+  }
+
+  a {
+    color: #2563eb;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+  .chevron-rigth {
+    color: var(--green);
+  }
+  .comand{
+    color: var(--aqua);
+  }
+
+</style>

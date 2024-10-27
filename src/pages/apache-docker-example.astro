@@ -1,0 +1,59 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ArrowRigth from "../icons/ArrowRigth.astro"
+import Comand from "../components/Comand.astro"
+import CardComand from "../components/CardComand.astro";
+---
+
+<Layout
+  title="Apacher docker example"
+  description="Tutorial paso a paso para crear contenedores de Apache en Docker. Aprende comandos y técnicas clave para manejar contenedores y mejorar tu flujo de trabajo."
+  keywords="Docker, Apache, contenedor Docker, contenedor Apache, tutorial Docker, crear contenedor, Docker comandos"
+>
+  <section class="section">
+    <div class="container">
+      <h1>Crear Contenedores de Apache en Docker</h1>
+      <p>
+        En este artículo vamos a aprender cómo crear contenedores de Apache en
+        Docker.
+      </p>
+
+      <h2>Paso 1: Crear un Contenedor de Apache</h2>
+      <p>Crea un contenedor de Apache si la imagen de apache no existe la descargará:</p>
+      <CardComand title="docker run -d --name my_pache_container -p 8080:80 httpd" />
+      <pre>
+        <code><ArrowRigth/><Comand> docker</Comand> ps</code>
+        <code>CONTAINER ID   IMAGE     COMMAND              CREATED          STATUS          PORTS                                   NAMES</code>
+        <code>a46dd91918ef   httpd     "httpd-foreground"   38 minutes ago   Up 38 minutes   0.0.0.0:8080->80/tcp, :::8080->80/tcp   my_apache_container</code>
+      </pre>
+      <CardComand title="docker exec -it my_apache_container bash" />
+      <pre>
+        <code><ArrowRigth/> root@a46dd91918ef:/usr/local/apache2#<Comand>ls</Comand></code>
+        <code>bin  build  cgi-bin  conf  error  htdocs  icons  include  logs	modules</code>
+        <code><ArrowRigth/> root@a46dd91918ef:/usr/local/apache2#<Comand>cd</Comand> htdocs</code>
+        <code>root@a46dd91918ef:/usr/local/apache2/htdocs#<Comand>ls</Comand></code>
+        <code><ArrowRigth/> index.html</code>
+      </pre>
+      <p>El contenedor está listo y corriendo en <a href="http://localhost:8080">http://localhost:8080</a> y por defecto lee el archivo index.html.</p>
+      <h2>Paso 2: Crear un Archivo HTML</h2>
+      <p>
+        Dentro del contenedor, crea un archivo <code>about.html</code> en el directorio
+        <code>htdocs</code>:
+      </p>
+      <pre>
+        <code><ArrowRigth/> root@a46dd91918ef:/usr/local/apache2/htdocs# <Comand>pwd</Comand></code>
+        <code>/usr/local/apache2/htdocs</code>
+        <code><ArrowRigth/> root@a46dd91918ef:/usr/local/apache2/htdocs# <Comand>touch</Comand> about.html</code>
+        <code><ArrowRigth/> root@a46dd91918ef:/usr/local/apache2/htdocs#<Comand> ls</Comand></code>
+        <code>about.html  index.html</code>
+        <code><ArrowRigth/> root@a46dd91918ef:/usr/local/apache2/htdocs# <Comand>echo</Comand> {'<h1>About</h1>'} > about.html</code>
+      </pre>
+      <p>
+        Luego, visita <a href="http://localhost:8080/about.html"
+          >http://localhost:8080/about.html</a
+        > para ver el nuevo archivo creado.
+      </p>
+    </div>
+  </section>
+</Layout>
+<style></style>
