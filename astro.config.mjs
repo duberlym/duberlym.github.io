@@ -6,5 +6,5 @@ import tailwind from '@astrojs/tailwind';
 export default defineConfig({
   integrations: [tailwind()],
   site:'https://duberlym.github.io',
-  base: 'duberlym.github.io'
+  base: ''
 });
