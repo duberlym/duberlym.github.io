@@ -1,13 +1,57 @@
+---
+import { BASE_URL } from "@config/public_variables";
+
+type Shortcut = {
+  title: string;
+  href: string;
+  shortcuts?: Shortcut[];
+  is_folder?: boolean;
+};
+
+const SHORTCUTS: Shortcut[] = [
+  {
+    title: "Apache",
+    href: "apache",
+    is_folder: true,
+    shortcuts: [{ title: "Apache Docker", href: "apache-docker-example" }],
+  },
+  {
+    title: "Linux",
+    href: "linux",
+    is_folder: true,
+    shortcuts: [
+      { title: "Comands", href: "linux-comands" },
+      // { title: "Users and permissions", href: "users-and-permissions" },
+    ],
+  },
+];
+---
+
 <div class="sidebar">
   <ul>
-    <li><a href="https://duberlym.github.io/apache-docker-example">Docker Apache</a></li>
+    {
+      SHORTCUTS.map(({ href, title, shortcuts, is_folder }) => (
+        <li>
+          <a href={is_folder ? "#" : BASE_URL + "/" + href}>{title}</a>
+          {shortcuts !== undefined && shortcuts.length > 0 && (
+            <ul>
+              {shortcuts.map(({ href, title }) => (
+                <li>
+                  <a href={BASE_URL + "/" + href}>{title}</a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))
+    }
   </ul>
 </div>
 
 <style>
-    .sidebar {
-        margin-top: 40px ;
-        margin-right: 40px;
-        min-width: max-content;
-    }
+  .sidebar {
+    margin-top: 40px;
+    margin-right: 40px;
+    min-width: max-content;
+  }
 </style>
