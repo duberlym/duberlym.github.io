@@ -1,9 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
+console.log(import.meta.env.PUBLIC_BASE_URL)
 ---
 
 <Layout title="Welcome to Astro.">
 	<div class="container">
-		<p>Welcome 👋</p>
+		<p>Welcome to 👋</p>
+		<small>{import.meta.env.PUBLIC_BASE_URL}</small>
 	</div>
 </Layout>
