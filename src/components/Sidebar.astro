@@ -3,22 +3,23 @@ import { BASE_URL } from "@config/public_variables";
 
 type Shortcut = {
   title: string;
-  href: string;
-  shortcuts?: Shortcut[];
-  is_folder?: boolean;
+  shortcuts?: {title:string,href:string}[];
 };
 
 const SHORTCUTS: Shortcut[] = [
   {
     title: "Apache",
-    href: "apache",
-    is_folder: true,
     shortcuts: [{ title: "Apache Docker", href: "apache-docker-example" }],
   },
   {
+    title: "Docker",
+    shortcuts: [
+      { title: "Volumes", href: "docker-volumes" },
+      // { title: "Users and permissions", href: "users-and-permissions" },
+    ],
+  },
+  {
     title: "Linux",
-    href: "linux",
-    is_folder: true,
     shortcuts: [
       { title: "Comands", href: "linux-comands" },
       // { title: "Users and permissions", href: "users-and-permissions" },
@@ -30,10 +31,10 @@ const SHORTCUTS: Shortcut[] = [
 <div class="sidebar">
   <ul>
     {
-      SHORTCUTS.map(({ href, title, shortcuts, is_folder }) => (
+      SHORTCUTS.map(({ title, shortcuts }) => (
         <li>
-          <a href={is_folder ? "#" : BASE_URL + "/" + href}>{title}</a>
           {shortcuts !== undefined && shortcuts.length > 0 && (
+            <p>{title}</p>
             <ul>
               {shortcuts.map(({ href, title }) => (
                 <li>
@@ -53,5 +54,8 @@ const SHORTCUTS: Shortcut[] = [
     margin-top: 40px;
     margin-right: 40px;
     min-width: max-content;
+  }
+  .sidebar p {
+    font-weight: bold;
   }
 </style>

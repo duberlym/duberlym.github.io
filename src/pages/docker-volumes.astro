@@ -1,0 +1,143 @@
+---
+import CardComand from "@components/CardComand.astro";
+import Comand from "@components/Comand.astro";
+import { BASE_URL } from "@config/public_variables";
+import ArrowRigth from "@icons/ArrowRigth.astro";
+import Layout from "@layouts/Layout.astro";
+---
+
+<Layout
+  title="Docker volumes"
+  description="Aprende a crear volumes en docker fácil y rápido"
+  keywords="volumes docker, docker, deploy, linux, host"
+>
+  <div class="container">
+    <h1>volumees en docker</h1>
+    <h2>1. Creación y uso de volumes</h2>
+    <p>Crear un volume</p>
+    <CardComand title="docker volume create my_volume" />
+    <p>Ver la lista de todos los volumes creados</p>
+    <CardComand title="docker volume ls" />
+    <p>Ver detalles de un volume</p>
+    <CardComand title="docker volume inspect my_volume" />
+    <pre>
+        <code>{`[
+    {
+        "CreatedAt": "2024-10-28T11:39:35-05:00",
+        "Driver": "local",
+        "Labels": null,
+        "Mountpoint": "/var/lib/docker/volumes/my_volume/_data",
+        "Name": "my_volume",
+        "Options": null,
+        "Scope": "local"
+    }
+]`}</code>
+        </pre>
+    <p>
+      Usar un volume en un contenedor. <a
+        href={BASE_URL + "/apache-docker-example"}
+        >Más detalles para configurar un contenedor de apache con docker.</a>
+    </p>
+    <CardComand
+      title="docker run -d --name my_apache_container -p 8080:80 -v my_volume:/usr/local/apache2/htdocs httpd"
+    />
+    <p>Entramos en el contenedor</p>
+    <CardComand title="docker exec -it my_apache_container bash"/>
+    <pre>
+        <code><ArrowRigth/> root@1d14ab32b9f4:/usr/local/apache2# <Comand>pwd</Comand></code>
+        <code>/usr/local/apache2</code>
+        <code><ArrowRigth/> root@1d14ab32b9f4:/usr/local/apache2# <Comand>cd</Comand> htdocs</code>
+        <code>/usr/local/apache2/htdocs</code>
+        <code><ArrowRigth/> root@1d14ab32b9f4:/usr/local/apache2# <Comand>ls</Comand></code>
+        <code>index.html</code>
+    </pre>
+    <p>Verificamos los archivos del volume desde nuestro host fuera del contenedor, la ruta donde está ubicado nuestro volume creado es el <code>Mountpoint</code> que se ve cuando hacemos <code>docker inspect my_volume.</code></p>
+    <CardComand title="sudo ls /var/lib/docker/volumes/my_volume/_data"/>
+    <pre><code>index.html</code></pre>
+    <p>Si creamos archivos dentro del contendor se verá reflejado en el volume. <a href={BASE_URL + "/linux-comands"}>Más detalles sobre la creación de archivos en linux.</a></p>
+    <CardComand title="echo '<h1>about</h1>' >> about.html"/>
+    <pre>
+        <code><ArrowRigth/> root@1d14ab32b9f4:/usr/local/apache2# <Comand>ls</Comand></code>
+        <code>about.html  index.html</code>
+    </pre>
+    <p>Verificamos</p>
+    <CardComand title="sudo ls /var/lib/docker/volumes/my_volume/_data"/>
+    <pre><code>about.html  index.html</code></pre>
+
+    <p>Eliminar un volume, si está en uso no se eliminará.</p>
+    <CardComand title="docker stop my_apache_container"/>
+    <CardComand title="docker rm my_apache_container"/>
+    <CardComand title="docker volume rm my_volume " />
+    <h2>2. Usar un directorio del host como volume </h2>
+    <p>Creamos un directorio y dentro dos archivos <code>index.html y about.html</code></p>
+    <CardComand title="mkdir /home/duberly/my_host_directory && cd my_host_directory"/>
+    <CardComand title="echo '<h1>index</h1>' >> index.html"/>
+    <CardComand title="echo '<h1>about</h1>' >> about.html"/>
+    <pre>
+        <code><ArrowRigth/> <Comand>ls</Comand></code>
+        <code>about.html  index.html</code>
+    </pre>
+    <p>Ahora creamos un contenedor usando <code>my_host_directory</code> como volume</p>
+    <CardComand title="docker run -d --name my_apache_container -p 8080:80 -v /home/duberly/my_host_directory:/usr/local/apache2/htdocs httpd"/>
+    <p>Entramos dentro del contenedor y navegamos al directorio <code>/usr/local/apache2/htdocs</code></p>
+    <CardComand title="docker exec -it my_apache_container bash"/>
+    <pre>
+        <code><ArrowRigth/><Comand> cd</Comand> htdocs</code>
+        <code><ArrowRigth/><Comand> pwd</Comand></code>
+        <code>/urs/local/apache2/htdocs</code>
+        <code><ArrowRigth/> <Comand>ls</Comand></code>
+        <code>about.html  index.html</code>
+    </pre>   
+    <p>Observamos que tenemos los mismos archivos que creamos en el directorio my_host_directory y también podemos ver los archivos disponibles en:</p>
+    <a href="http://localhost:8080">http://localhost:8080</a><br>
+    <a href="http://localhost:8080/about.html">http://localhost:8080/about.html</a>
+    <h2>3. Crear un volume desde un Dockerfile</h2>
+    <p>Dentro del directorio my_host_directory creamos un archivo <code>Dockerfile</code></p>
+    <CardComand title="nano Dockerfile"/>
+    <pre>
+        <code><ArrowRigth/> <Comand>cat Dockerfile</Comand></code>
+        <code>from httpd</code>
+        <code>VOLUME /usr/local/apache2/htdocs</code>
+        <code>COPY . /usr/local/apache2/htdocs</code>
+    </pre>
+    <pre>
+        <code><ArrowRigth/> <Comand>ls</Comand></code>
+        <code>Dockerfile  about.html  index.html</code>
+    </pre>
+    <p>Creamos la imagen</p>
+    <CardComand title="docker build -t my_apache_image ."/>
+    <CardComand title="docker images"/>
+    <pre><code>REPOSITORY               TAG       IMAGE ID       CREATED          SIZE
+my_apache_image          latest    e216491dd672   21 minutes ago   148MB
+        </code>
+    </pre>
+    <p>Creamos un contenedor a partir de la imagen</p>
+    <CardComand title="docker run -d --name my_apache_container -p 8080:80 my_apache_image"/>
+    <p>Entramos dentro del contenedor y navegamos al directorio <code>/usr/local/apache2/htdocs</code></p>
+    <CardComand title="docker exec -it my_apache_container bash"/>
+    <pre>
+        <code><ArrowRigth/><Comand> cd</Comand> htdocs && <Comand>ls</Comand></code>
+        <code>Dockerfile about.html  index.html</code>
+    </pre>
+    <p>Inspecionamos el contenedor y buscamos la propiedad <code>Mounts</code></p>
+    <CardComand title="docker inspect my_docker_container"/>
+    <pre><code>{`"Mounts": [
+    {
+        "Type": "volume",
+        "Name": "20fea354ff012ab676ce9b27fc7ba41627e469ec78aa7f290fa5af6bfd7ebeda",
+        "Source": "/var/lib/docker/volumes/20fea354ff012ab676ce9b27fc7ba41627e469ec78aa7f290fa5af6bfd7ebeda/_data",
+        "Destination": "/usr/local/apache2/htdocs",
+        "Driver": "local",
+        "Mode": "",
+        "RW": true,
+        "Propagation": ""
+    }
+],
+`}</code></pre>
+    <p>Listar los archivos del nuevo volume creado desde nuestro host</p>
+    <CardComand title="sudo ls /var/lib/docker/volumes/20fea354ff012ab676ce9b27fc7ba41627e469ec78aa7f290fa5af6bfd7ebeda/_data"/>
+    <pre><code>Dockerfile  about.html	index.html</code>
+    </pre>
+    <!-- <h2>4. Compartir un volume entre contenedores</h2> -->
+  </div>
+</Layout>

@@ -9,19 +9,23 @@ import Layout from "@layouts/Layout.astro";
   keywords="Linux, kali linux, comandos linux"
 >
     <section class="container">
-        <h1>Linux comands</h1>
+        <h1>Comandos linux</h1>
+        <p>Crear archivos y asignar contenido</p>
+        <CardComand title="touch index.html && echo '<h1>index</h1>'>index.html"/>
+        <p>Forma corta de crear archivos y asignar contendido</p>
+        <CardComand title="echo '<h1>index</h1>' >> index.html"/>
         <p>Ver las últimas dos líneas de un archivo.</p>
         <CardComand title="tail -n 2 /etc/passwd"/>
         <p>Listar los dispositivos USB conectados</p>
         <CardComand title="lsusb"/>
-        <h2>2. Controlar pantalla</h2>
+        <h2>1. Controlar pantalla</h2>
         <p>Lista los monitores que tenemos conectados.</p>
         <CardComand title="xrandr"/>
         <p>Habilitar el monitor llamado eDP</p>
         <CardComand title="xrandr --output eDP --auto"/>
         <p>Desabilitar el monitor llamado eDP</p>
         <CardComand title="xrandr --output eDP --off"/>
-        <h2>3. Volumen</h2>
+        <h2>2. Volumen</h2>
         <p>Subir el volumen un 10%</p>
         <CardComand title="amixer sset Master 10%+"/>
         <p>Vajar el volumen un 10%</p>
