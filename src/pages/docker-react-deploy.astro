@@ -1,7 +1,6 @@
 ---
 import CardComand from "@components/CardComand.astro";
-import Comand from "@components/Comand.astro";
-import ArrowRigth from "@icons/ArrowRigth.astro";
+import { BASE_URL } from "@config/public_variables";
 import Layout from "@layouts/Layout.astro";
 const pages = ["Index","About","Contact"]
 ---
@@ -13,55 +12,41 @@ const pages = ["Index","About","Contact"]
     >
     <div class="container">
         <h1>Deplegar una aplicación de react con docker</h1>
-        <h2>1. Crear proyecto de react </h2>
-        <p>En este caso usaremos vite y además para las rutas usaremos <a href="https://www.npmjs.com/package/react-router-dom">React Router DOM</a></p>
-        <CardComand title="npm create vite my_app"/>
-        <CardComand title="cd my_app && npm i && npm run dev"/>
+        <p>En este caso usaremos el <a href={BASE_URL + "/create-project-react"}>proyecto react creado anteriormente</a> </p>
+        <h2>1. Crear el Dockerfile</h2>
+        <CardComand title="nano Dockerfile"/>
         <pre>
-            <code>{`> my_app@0.0.0 dev`}</code>
-            <code>{`> vite`}</code>
-            <code> <span class="text-green"> VITE v5.4.10</span>  ready in <strong>334</strong> ms</code>
-            <code>  <span class="text-green">➜</span>  <strong>Local</strong>:   <a class="text-aqua" href="http://localhost:5173">http://localhost:5173/</a></code>
-            <code>  <span class="text-green">➜</span>  Network: use <strong>--host</strong> to expose</code>
-            <code>  <span class="text-green">➜</span>  press <strong>h + enter</strong> to show help</code>
+            <code><span class="text-yellow">FROM</span> node:20</code>
+            <code><span class="text-yellow">WORKDIR</span> /my_app</code>
+            <code><span class="text-yellow">COPY</span> . . </code>
+            <code><span class="text-yellow">RUN</span> npm install</code>
+            <code><span class="text-yellow">RUN</span> npm run build </code>
+            <code><span class="text-yellow">RUN</span> npm install -g serve </code>
+            <code><span class="text-yellow">EXPOSE</span> 3000 </code>
+            <code><span class="text-yellow">CMD</span> ["serve", "-s" ,"dist"] </code>
         </pre>
-        <CardComand title="npm i react-router-dom && mkdir src/pages && touch src/pages/{Index,Contact,About}.tsx"/>
+        <h2>2. Crear la imagen y el contendor</h2>
+        <p>Creamos la imagen</p>
+        <CardComand title="docker build -t my_app_image ."/>
+        <CardComand title="docker images"/>
         <pre>
-            <code><ArrowRigth/> <Comand>cat</Comand> {`src/pages/{Index,About,Contact}.tsx`}</code>
-            {pages.map(c=>(
-                <code class="mt-2"><span class="text-red">export default</span> <span class="text-aqua">function</span> <span class="text-green">{c}</span>() <span class="text-yellow">{`{`}</span></code>
-                <code>  <span class="text-red">return</span> {`<`}<span class="text-red">div</span>{`>`}{c}{`</`}<span class="text-red">div</span>{`>`}</code>
-                <code class="text-yellow">{`}`}</code>
+            <code>REPOSITORY               TAG       IMAGE ID       CREATED              SIZE</code>
+            <code>my_app_image             latest    ccb1c0038a2c   About a minute ago   1.2GB</code>
+        </pre>
+        <p>Ahora creamos el contenedor basado en la imagen</p>
+        <CardComand title="docker run -d -p 80:3000 --name my_app_container my_app_image"/>
+        <CardComand title="docker ps"/>  
+        <pre>
+            <code>CONTAINER ID   IMAGE          COMMAND                  CREATED         STATUS         PORTS                                       NAMES            </code>
+            <code>{`acd928431a81   my_app_image   "docker-entrypoint.s…"   5 seconds ago   Up 2 seconds   0.0.0.0:4000->3000/tcp, :::4000->3000/tcp   my_app_container`}</code>
+        </pre>       
+        <p>Listo ya podemos visitar:</p>
+        <ul>
+            {["","about","contact"].map(c=>( 
+            <li>
+                <a href="http://127.0.0.1/about">http://127.0.0.1/{c}</a> 
+            </li>
             ))}
-        </pre>
-
-        <pre>
-            <code><ArrowRigth/> <Comand>cat</Comand> src/App.tsx</code>
-            <code><span class="text-red">import</span> {`{ Route, Routes }`} <span class="text-red">from</span> <span class="text-yellow">{`'react-router-dom'`}</span>;</code>
-            {pages.map(p=>( 
-                <code><span class="text-red">import</span> {p} <span class="text-red">from</span> <span class="text-yellow">{`'./pages/${p}'`}</span>;</code>
-            ))}
-            <code class="mt-2"><span class="text-red">export default</span> <span class="text-aqua">function</span> <span class="text-green">App</span>() <span class="text-yellow">{`{`}</span></code>
-            <code>  <span class="text-red">return</span> (</code>
-            <code>     {`<`}<span class="text-green">Routes</span>{`>`}</code>
-            {pages.map((p) =>(
-                <code>       {`<`}<span class="text-green">Route path</span><span class="text-red">=</span><span class="text-yellow">"/"</span> <span class="text-green">element</span><span class="text-red">=</span><span class="text-white">{`{<`}</span><span class="text-green">{p}</span><span class="text-white">{`/>}`}</span>{`/>`}</code>)  
-            )} 
-                <code>     {`</`}<span class="text-green">Routes</span>{`>`}</code>
-            <code> {` )`}</code>
-            <code class="text-yellow">{`}`}</code>
-        </pre>
-
-        <pre>
-            <code><ArrowRigth/> <Comand>cat</Comand> src/main.tsx</code>
-            <code><span class="text-red">import</span> {`{ createRoot }`} <span class="text-red">from</span> <span class="text-yellow">{`'react-dom/client'`}</span>;</code>
-            <code><span class="text-red">import</span> {`{ BrowserRouter }`} <span class="text-red">from</span> <span class="text-yellow">{`'react-router-dom'`}</span>;</code>
-            <code><span class="text-red">import</span> {`App`} <span class="text-red">from</span> <span class="text-yellow">{`'./App.tsx'`}</span>;</code>
-            <code><span class="text-green">createRoot</span>{`(document.`}<span class="text-aqua">getElementById</span>(<span class="text-yellow">'root'</span>)<span class="text-red">!</span>).<span class="text-green">render</span>(</code>
-            <code> {`<`}<span class="text-green">BrowserRouter</span>{`>`}</code>
-            <code>   {`<`}<span class="text-green">App</span>{`/>`}</code>
-            <code> {`</`}<span class="text-green">BrowserRouter</span>{`>`}</code>
-            <code>);</code>
-        </pre>
+        </ul>
     </div>
 </Layout>

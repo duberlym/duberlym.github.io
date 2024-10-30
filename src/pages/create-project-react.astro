@@ -1,0 +1,73 @@
+---
+import CardComand from "@components/CardComand.astro";
+import Comand from "@components/Comand.astro";
+import ArrowRigth from "@icons/ArrowRigth.astro";
+import Layout from "@layouts/Layout.astro";
+const pages = ["Index","About","Contact"]
+---
+
+<Layout 
+    title="Deploy react docker"
+    description="Como desplegar un mi página de react en docker"
+    keywords="Deploy react docker, Dockerize react aplicaction"
+    >
+    <div class="container">
+        <h1>Crear proyecto de react</h1>
+        <p>En este caso usaremos vite y además para las rutas usaremos <a href="https://www.npmjs.com/package/react-router-dom">React Router DOM</a></p>
+        <CardComand title="npm create vite my_app"/>
+        <CardComand title="cd my_app && npm i"/>
+        <CardComand title="npm i react-router-dom && mkdir src/pages && touch src/pages/{Index,Contact,About}.tsx"/>
+        <pre>
+            <code><ArrowRigth/> <Comand>cat</Comand> {`src/pages/{Index,About,Contact}.tsx`}</code>
+            {pages.map(c=>(
+                <code class="mt-2"><span class="text-red">export default</span> <span class="text-aqua">function</span> <span class="text-green">{c}</span>() <span class="text-yellow">{`{`}</span></code>
+                <code>  <span class="text-red">return</span> {`<`}<span class="text-red">div</span>{`>`}{c}{`</`}<span class="text-red">div</span>{`>`}</code>
+                <code class="text-yellow">{`}`}</code>
+            ))}
+        </pre>
+
+        <pre>
+            <code><ArrowRigth/> <Comand>cat</Comand> src/App.tsx</code>
+            <code><span class="text-red">import</span> {`{ Route, Routes }`} <span class="text-red">from</span> <span class="text-yellow">{`'react-router-dom'`}</span>;</code>
+            {pages.map(p=>( 
+                <code><span class="text-red">import</span> {p} <span class="text-red">from</span> <span class="text-yellow">{`'./pages/${p}'`}</span>;</code>
+            ))}
+            <code class="mt-2"><span class="text-red">export default</span> <span class="text-aqua">function</span> <span class="text-green">App</span>() <span class="text-yellow">{`{`}</span></code>
+            <code>  <span class="text-red">return</span> (</code>
+            <code>     {`<`}<span class="text-green">Routes</span>{`>`}</code>
+            {pages.map((p) =>(
+                <code>       {`<`}<span class="text-green">Route path</span><span class="text-red">=</span><span class="text-yellow">"/"</span> <span class="text-green">element</span><span class="text-red">=</span><span class="text-white">{`{<`}</span><span class="text-green">{p}</span><span class="text-white">{`/>}`}</span>{`/>`}</code>)  
+            )} 
+                <code>     {`</`}<span class="text-green">Routes</span>{`>`}</code>
+            <code> {` )`}</code>
+            <code class="text-yellow">{`}`}</code>
+        </pre>
+
+        <pre>
+            <code><ArrowRigth/> <Comand>cat</Comand> src/main.tsx</code>
+            <code><span class="text-red">import</span> {`{ createRoot }`} <span class="text-red">from</span> <span class="text-yellow">{`'react-dom/client'`}</span>;</code>
+            <code><span class="text-red">import</span> {`{ BrowserRouter }`} <span class="text-red">from</span> <span class="text-yellow">{`'react-router-dom'`}</span>;</code>
+            <code><span class="text-red">import</span> {`App`} <span class="text-red">from</span> <span class="text-yellow">{`'./App.tsx'`}</span>;</code>
+            <code><span class="text-green">createRoot</span>{`(document.`}<span class="text-aqua">getElementById</span>(<span class="text-yellow">'root'</span>)<span class="text-red">!</span>).<span class="text-green">render</span>(</code>
+            <code> {`<`}<span class="text-green">BrowserRouter</span>{`>`}</code>
+            <code>   {`<`}<span class="text-green">App</span>{`/>`}</code>
+            <code> {`</`}<span class="text-green">BrowserRouter</span>{`>`}</code>
+            <code>);</code>
+        </pre>
+        <p>Ejecutamos</p>
+        <CardComand title="npm run dev"/>
+        <pre>
+            <code>{`> my_app@0.0.0 dev`}</code>
+            <code>{`> vite`}</code>
+            <code> <span class="text-green"> VITE v5.4.10</span>  ready in <strong>334</strong> ms</code>
+            <code>  <span class="text-green">➜</span>  <strong>Local</strong>:   <a class="text-aqua" href="http://localhost:5173">http://localhost:5173/</a></code>
+            <code>  <span class="text-green">➜</span>  Network: use <strong>--host</strong> to expose</code>
+            <code>  <span class="text-green">➜</span>  press <strong>h + enter</strong> to show help</code>
+        </pre>
+        <ul>
+            <li><a href="http://localhost:5173/">http://localhost:5173/</a></li>
+            <li><a href="http://localhost:5173/about">http://localhost:5173/about</a></li>
+            <li><a href="http://localhost/contact:5173/">http://localhost:5173/contact</a></li>
+        </ul>
+    </div>
+</Layout>
